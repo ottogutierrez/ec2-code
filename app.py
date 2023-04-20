@@ -95,7 +95,7 @@ def scrape(search_term, results_list):
         pass
 
 
-def scrape():
+def scrape_main():
     # Get the uploaded file's details
     bucket = 'scrape-input'
     key = 'input.xlsx'
@@ -106,7 +106,7 @@ def scrape():
     # Read the uploaded Excel file into a DataFrame
     obj = s3.get_object(Bucket=bucket, Key=key)
     data = obj['Body'].read()
-    df = pd.read_excel(BytesIO(data), engine='openpyxl')
+    df = pd.read_excel(BytesIO(data), engine='openpyxl',sheet_name='phrases')
 
     # Modify the DataFrame
     df = df[['phrase', 'volume_score', 'rank_score',
@@ -148,4 +148,4 @@ def scrape():
 
 
 if __name__ == "__main__":
-    scrape()
+    scrape_main()
