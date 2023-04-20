@@ -120,14 +120,9 @@ def scrape_main():
     n = df.shape[0]  # total number of iterations
     progress = 0  # progress counter
 
-    for index, row in df.iterrows():
+    for index, row in tqdm(df.iterrows()):
         temp_phrase = row['phrase']
         scrape(search_term=temp_phrase, results_list=search_results)
-     # update the progress counter
-    progress += 1
-    # show the progress bar
-    progress_bar = tqdm(total=n, desc='Processing', position=0, leave=True)
-    progress_bar.update(progress)
     # Check how many phrases were not found
     if len(phrases_not_found) > 0:
         print("Need to run Selenium for " +
