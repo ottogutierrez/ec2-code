@@ -108,12 +108,12 @@ def scrape():
     df = pd.read_excel(BytesIO(data), engine='openpyxl')
 
     # Modify the DataFrame
-    phrases_df = phrases_df[['phrase', 'volume_score', 'rank_score',
-                             'frequency_score', 'total_score', 'KW Classification2']]
-    phrases_df = phrases_df[phrases_df['KW Classification2'] != "Don't use?"]
+    df = df[['phrase', 'volume_score', 'rank_score',
+             'frequency_score', 'total_score', 'KW Classification2']]
+    df = df[df['KW Classification2'] != "Don't use?"]
     search_results = []
     phrases_not_found = []
-    for index, row in phrases_df.iterrows():
+    for index, row in df.iterrows():
         temp_phrase = row['phrase']
         scrape(search_term=temp_phrase, results_list=search_results)
 
@@ -122,9 +122,9 @@ def scrape():
               str(len(phrases_not_found)) + " phrases")
 
     search_results_dicts = [product.__dict__ for product in search_results]
-    df = pd.DataFrame(search_results_dicts)
-    df = pd.DataFrame.merge(df, phrases_df, on='phrase',
-                            how='outer', suffixes=(None, None))
+    df2 = pd.DataFrame(search_results_dicts)
+    df2 = pd.DataFrame.merge(df2, df, on='phrase',
+                             how='outer', suffixes=(None, None))
 
     print("Done scraping")
     # Save the modified DataFrame to a new Excel file in the specified S3 bucket
@@ -132,10 +132,11 @@ def scrape():
     output_key = 'modified-' + key
 
     with BytesIO() as buffer:
-        df.to_excel(buffer, index=False, engine='openpyxl')
+        df2.to_excel(buffer, index=False, engine='openpyxl')
         buffer.seek(0)
         s3.put_object(Bucket=output_bucket, Key=output_key,
                       Body=buffer.getvalue())
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     scrape()
