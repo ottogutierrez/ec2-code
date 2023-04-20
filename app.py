@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from time import sleep
 from tqdm import tqdm
 
+phrases_not_found = []
+
 
 class Product:
     def __init__(self):
@@ -96,6 +98,7 @@ def scrape(search_term, results_list):
 
 
 def scrape_main():
+    global phrases_not_found
     # Get the uploaded file's details
     bucket = 'scrape-input'
     key = 'input.xlsx'
@@ -106,7 +109,7 @@ def scrape_main():
     # Read the uploaded Excel file into a DataFrame
     obj = s3.get_object(Bucket=bucket, Key=key)
     data = obj['Body'].read()
-    df = pd.read_excel(BytesIO(data), engine='openpyxl',sheet_name='phrases')
+    df = pd.read_excel(BytesIO(data), engine='openpyxl', sheet_name='phrases')
 
     # Modify the DataFrame
     df = df[['phrase', 'volume_score', 'rank_score',
