@@ -110,7 +110,6 @@ def scrape_main():
     obj = s3.get_object(Bucket=bucket, Key=key)
     data = obj['Body'].read()
     df = pd.read_excel(BytesIO(data), engine='openpyxl', sheet_name='phrases')
-
     # Modify the DataFrame
     df = df[['phrase', 'volume_score', 'rank_score',
              'frequency_score', 'total_score', 'KW Classification2']]
@@ -120,7 +119,7 @@ def scrape_main():
     n = df.shape[0]  # total number of iterations
     progress = 0  # progress counter
 
-    for index, row in tqdm(df.iterrows()):
+    for index, row in tqdm(df.iterrows(), total=len(df)):
         temp_phrase = row['phrase']
         scrape(search_term=temp_phrase, results_list=search_results)
     # Check how many phrases were not found
