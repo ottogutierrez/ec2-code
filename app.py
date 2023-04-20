@@ -94,10 +94,10 @@ def scrape(search_term, results_list):
         pass
 
 
-def lambda_handler(event, context):
+def scrape():
     # Get the uploaded file's details
-    bucket = event['Records'][0]['s3']['bucket']['name']
-    key = event['Records'][0]['s3']['object']['key']
+    bucket = 'scrape-input'
+    key = 'input.xlsx'
 
     # Initialize the S3 client
     s3 = boto3.client('s3')
@@ -137,7 +137,5 @@ def lambda_handler(event, context):
         s3.put_object(Bucket=output_bucket, Key=output_key,
                       Body=buffer.getvalue())
 
-    return {
-        'statusCode': 200,
-        'body': f'Successfully modified the Excel file and saved it to {output_bucket}/{output_key}'
-    }
+if __name__=="__main__":
+    scrape()
